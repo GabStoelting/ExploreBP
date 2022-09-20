@@ -105,13 +105,14 @@ def plot_mean_per_group(data, pdf, group_list, ylim=(None, None)):
     # data - DataFrame; Contains all blood pressure data
     # pdf - matplotlib.PDFPages object; Allows to save graphs into PDF
     # group_list - list of strings; Contains all groups that should be analyzed
-    # ylim - set of two values (default = None); This set defines the y-axis scaling while the value will be
+    # ylim - set of two values (default = None, None); This set defines the y-axis scaling while the value will be
     #        automatically determined if set to "None"
 
     number_of_groups = len(group_list)
 
     plt.figure(figsize=(10, 2 * number_of_groups))  # Create figure
 
+    # Iterate over all groups to plot mean values
     for i, group in enumerate(group_list):
         plt.subplot(number_of_groups, 1, i + 1)  # Create subplot based on the number of groups
 
@@ -121,7 +122,7 @@ def plot_mean_per_group(data, pdf, group_list, ylim=(None, None)):
                                                                       label="Systolic")
         data_subset.groupby("rel_time").mean().diastolic.dropna().plot(color="blue", lw=0.2, alpha=0.5,
                                                                        label="Diastolic")
-        plt.legend(bbox_to_anchor=(1, 0.5))
+        plt.legend(bbox_to_anchor=(1, 0.5)) # Move legend outside of plot
         plt.title(f"Mean raw values of {group}")
         plt.ylabel("Pressure (mmHg)")
         plt.xlabel("")
@@ -214,8 +215,9 @@ def plot_animal(data, pdf, animal_list, xlim=(None, None), ylim_bp=(None, None),
 
 
 def main():
-    # This function contains all stuff for handling the graphical user interface
+    # This function contains all the stuff for handling the graphical user interface
 
+    # The following defines the "raw file analysis" tab
     raw_layout = [
         [sg.Text("Scan files in directory:")],
         [sg.Input(key="-DIRECTORY-",
@@ -226,10 +228,11 @@ def main():
          sg.FileBrowse('Select animal list...', target='-ANIMAL_LIST-')],
         [sg.Text("PDF Output")],
         [sg.Input(key="-PDF_FILE-", default_text=""),
-         sg.FileSaveAs('Save as PDF file...', target='-PDF_FILE-')],
+         sg.FileSaveAs('Save as PDF file...', target='-PDF_FILE-', default_extension=".pdf")],
         [sg.Button("Start processing raw files")],
     ]
 
+    # The following defines the "curated file analysis" tab
     curated_layout = [
         [sg.Text("Excel file with curated data:")],
         [sg.Input(key="-CURATED_FILE-", default_text=""), sg.FileBrowse('Select file', target='-CURATED_FILE-')],
@@ -239,7 +242,7 @@ def main():
         [sg.Text("PDF Output")],
 
         [sg.Input(key="-PDF_FILE-", default_text=""),
-         sg.FileSaveAs('Save as PDF file...', target='-PDF_FILE-')],
+         sg.FileSaveAs('Save as PDF file...', target='-PDF_FILE-', default_extension=".pdf")],
         [sg.Button("Start processing curated file")],
     ]
     layout = [
